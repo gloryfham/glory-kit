@@ -1,6 +1,6 @@
 # glory-kit
 
-Glory 工具集 -- 保险产品查询 MCP Server，适用于 Claude Desktop 和 Claude Code。
+Glory 工具集 -- 保险产品查询 MCP Server，适用于 Claude Desktop、Claude Code、Qoder、Kiro、OpenCode。
 
 GitHub: https://github.com/gloryfham/glory-kit
 
@@ -68,6 +68,30 @@ npx glory-product-query-mcp setup claude-code
 
 在当前目录生成 `.mcp.json`（需重启 Claude Code 会话生效）。
 
+**Qoder:**
+
+```bash
+npx glory-product-query-mcp setup qoder
+```
+
+在当前目录生成 `.mcp.json`（需重启 Qoder 会话生效）。
+
+**Kiro:**
+
+```bash
+npx glory-product-query-mcp setup kiro
+```
+
+在当前目录生成 `.kiro/settings/mcp.json`（需重启 Kiro 生效）。
+
+**OpenCode:**
+
+```bash
+npx glory-product-query-mcp setup opencode
+```
+
+写入全局配置 `~/.config/opencode/mcp.json`（需重启 OpenCode 生效）。
+
 ## CLI 命令
 
 ```
@@ -75,7 +99,10 @@ glory-product-query-mcp config              # 查看当前配置
 glory-product-query-mcp config init --baseUrl <url>  # 初始化配置（必填 baseUrl）
 glory-product-query-mcp config set baseUrl <url>     # 修改 baseUrl
 glory-product-query-mcp setup claude-desktop  # 配置 Claude Desktop
-glory-product-query-mcp setup claude-code     # 配置 Claude Code（当前目录）
+glory-product-query-mcp setup claude-code     # 配置 Claude Code（当前目录 .mcp.json）
+glory-product-query-mcp setup qoder           # 配置 Qoder（当前目录 .mcp.json）
+glory-product-query-mcp setup kiro            # 配置 Kiro（当前目录 .kiro/settings/mcp.json）
+glory-product-query-mcp setup opencode        # 配置 OpenCode（~/.config/opencode/mcp.json）
 glory-product-query-mcp serve                 # 启动 MCP Server (STDIO)
 ```
 

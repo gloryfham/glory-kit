@@ -91,10 +91,46 @@ function getServerScriptPath(): string {
   return path.resolve(__dirname, "index.js");
 }
 
-function setupClaudeDesktop(): void {
+/**
+ * 通用: 向指定 JSON 配置文件注入 MCP Server 配置
+ */
+function injectMcpConfig(configPath: string, clientName: string): void {
   const serverPath = getServerScriptPath();
 
-  // 查找 Claude Desktop 配置文件
+  // 确保目录存在
+  const dir = path.dirname(configPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  // 读取或创建配置
+  let config: Record<string, unknown> = {};
+  if (fs.existsSync(configPath)) {
+    try {
+      config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+    } catch {
+      config = {};
+    }
+  }
+
+  // 注入 MCP Server 配置
+  if (!config.mcpServers || typeof config.mcpServers !== "object") {
+    config.mcpServers = {};
+  }
+  (config.mcpServers as Record<string, unknown>)["glory-product-query"] = {
+    command: "node",
+    args: [serverPath],
+  };
+
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf-8");
+  console.log("%s 配置已更新: %s", clientName, configPath);
+  console.log("\n已注册 MCP Server:");
+  console.log("  name: glory-product-query");
+  console.log("  command: node %s", serverPath);
+  console.log("\n请重启 %s 以生效。", clientName);
+}
+
+function setupClaudeDesktop(): void {
   let configPath: string;
   if (process.platform === "darwin") {
     configPath = path.join(
@@ -113,87 +149,59 @@ function setupClaudeDesktop(): void {
   } else {
     configPath = path.join(os.homedir(), ".config", "Claude", "claude_desktop_config.json");
   }
-
-  // 读取或创建配置
-  let config: Record<string, unknown> = {};
-  if (fs.existsSync(configPath)) {
-    try {
-      config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-    } catch {
-      config = {};
-    }
-  } else {
-    // 确保目录存在
-    const dir = path.dirname(configPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-  }
-
-  // 注入 MCP Server 配置
-  if (!config.mcpServers || typeof config.mcpServers !== "object") {
-    config.mcpServers = {};
-  }
-  (config.mcpServers as Record<string, unknown>)["glory-product-query"] = {
-    command: "node",
-    args: [serverPath],
-  };
-
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf-8");
-  console.log("Claude Desktop 配置已更新: %s", configPath);
-  console.log("\n已注册 MCP Server:");
-  console.log("  name: glory-product-query");
-  console.log("  command: node %s", serverPath);
-  console.log("\n请重启 Claude Desktop 以生效。");
+  injectMcpConfig(configPath, "Claude Desktop");
 }
 
 function setupClaudeCode(): void {
-  const serverPath = getServerScriptPath();
   const mcpFile = path.resolve(process.cwd(), ".mcp.json");
+  injectMcpConfig(mcpFile, "Claude Code");
+}
 
-  // 读取或创建配置
-  let config: Record<string, unknown> = {};
-  if (fs.existsSync(mcpFile)) {
-    try {
-      config = JSON.parse(fs.readFileSync(mcpFile, "utf-8"));
-    } catch {
-      config = {};
-    }
-  }
+function setupQoder(): void {
+  // Qoder 使用项目根目录 .mcp.json，与 Claude Code 相同格式
+  const mcpFile = path.resolve(process.cwd(), ".mcp.json");
+  injectMcpConfig(mcpFile, "Qoder");
+}
 
-  // 注入 MCP Server 配置
-  if (!config.mcpServers || typeof config.mcpServers !== "object") {
-    config.mcpServers = {};
-  }
-  (config.mcpServers as Record<string, unknown>)["glory-product-query"] = {
-    command: "node",
-    args: [serverPath],
-  };
+function setupKiro(): void {
+  // Kiro 项目级配置: .kiro/settings/mcp.json
+  const mcpFile = path.resolve(process.cwd(), ".kiro", "settings", "mcp.json");
+  injectMcpConfig(mcpFile, "Kiro");
+}
 
-  fs.writeFileSync(mcpFile, JSON.stringify(config, null, 2) + "\n", "utf-8");
-  console.log("Claude Code 配置已更新: %s", mcpFile);
-  console.log("\n已注册 MCP Server:");
-  console.log("  name: glory-product-query");
-  console.log("  command: node %s", serverPath);
-  console.log("\n请重启 Claude Code 会话以生效。");
+function setupOpenCode(): void {
+  // OpenCode 全局配置: ~/.config/opencode/mcp.json
+  const mcpFile = path.join(os.homedir(), ".config", "opencode", "mcp.json");
+  injectMcpConfig(mcpFile, "OpenCode");
 }
 
 function handleSetup(args: string[]): void {
   const target = args[0]?.toLowerCase();
 
-  if (target === "claude-desktop") {
-    setupClaudeDesktop();
-    return;
-  }
-
-  if (target === "claude-code") {
-    setupClaudeCode();
-    return;
+  switch (target) {
+    case "claude-desktop":
+      setupClaudeDesktop();
+      return;
+    case "claude-code":
+      setupClaudeCode();
+      return;
+    case "qoder":
+      setupQoder();
+      return;
+    case "kiro":
+      setupKiro();
+      return;
+    case "opencode":
+      setupOpenCode();
+      return;
   }
 
   console.error("用法:");
   console.error("  glory-product-query-mcp setup claude-desktop  # 配置 Claude Desktop");
-  console.error("  glory-product-query-mcp setup claude-code     # 配置 Claude Code（当前目录）");
+  console.error("  glory-product-query-mcp setup claude-code     # 配置 Claude Code（当前目录 .mcp.json）");
+  console.error("  glory-product-query-mcp setup qoder           # 配置 Qoder（当前目录 .mcp.json）");
+  console.error("  glory-product-query-mcp setup kiro            # 配置 Kiro（当前目录 .kiro/settings/mcp.json）");
+  console.error("  glory-product-query-mcp setup opencode        # 配置 OpenCode（~/.config/opencode/mcp.json）");
   process.exit(1);
 }
 
@@ -212,6 +220,9 @@ function main(): void {
     console.log("Setup 目标:");
     console.log("  claude-desktop   配置 Claude Desktop");
     console.log("  claude-code      配置 Claude Code（当前目录 .mcp.json）");
+    console.log("  qoder            配置 Qoder（当前目录 .mcp.json）");
+    console.log("  kiro             配置 Kiro（当前目录 .kiro/settings/mcp.json）");
+    console.log("  opencode         配置 OpenCode（~/.config/opencode/mcp.json）");
     return;
   }
 
