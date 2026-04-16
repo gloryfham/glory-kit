@@ -27,7 +27,7 @@ glory-kit/
 ### 第一步：安装
 
 ```bash
-npm install gloryfham/glory-kit
+npm install @gloryfham/glory-product-query-mcp
 ```
 
 安装时会自动编译 TypeScript 源码，无需手动 build。
@@ -120,7 +120,7 @@ npx qoder skills add gloryfham/glory-kit
 
 ```bash
 mkdir -p .claude/skills
-cp -r node_modules/glory-product-query-mcp/skills/glory-product-query .claude/skills/
+cp -r node_modules/@gloryfham/glory-product-query-mcp/skills/glory-product-query .claude/skills/
 ```
 
 **Claude Desktop:**

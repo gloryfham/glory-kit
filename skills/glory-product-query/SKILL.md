@@ -11,7 +11,7 @@ description: 查询保险产品/销售计划列表，支持按状态、渠道筛
 
 此 skill 依赖 `glory-product-query` MCP Server。安装步骤：
 
-1. 安装: `npm install gloryfham/glory-kit`
+1. 安装: `npm install @gloryfham/glory-product-query-mcp`
 2. 初始化配置: `npx glory-product-query-mcp config init`
 3. 配置 Claude Code: `npx glory-product-query-mcp setup claude-code`
 
