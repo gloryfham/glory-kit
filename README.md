@@ -35,22 +35,18 @@ npm install gloryfham/glory-kit
 ### 第二步：初始化配置
 
 ```bash
-npx glory-product-query-mcp config init
+npx glory-product-query-mcp config init --baseUrl <API地址>
 ```
 
-默认配置:
-
-| 配置项 | 默认值 |
-|--------|--------|
-| baseUrl | `https://hkapi.noahgroup.com/api/insurance` |
-
-如需自定义 baseUrl：
-
-```bash
-npx glory-product-query-mcp config init --baseUrl https://your-api-host/api/insurance
-```
+`--baseUrl` 为必填项，请向管理员获取 API 地址。
 
 配置文件保存在 `~/.glory/config.json`。
+
+如需后续修改 baseUrl：
+
+```bash
+npx glory-product-query-mcp config set baseUrl <url>
+```
 
 ### 第三步：配置 MCP 客户端
 
@@ -76,8 +72,7 @@ npx glory-product-query-mcp setup claude-code
 
 ```
 glory-product-query-mcp config              # 查看当前配置
-glory-product-query-mcp config init          # 初始化默认配置
-glory-product-query-mcp config init --baseUrl <url>  # 初始化并设置 baseUrl
+glory-product-query-mcp config init --baseUrl <url>  # 初始化配置（必填 baseUrl）
 glory-product-query-mcp config set baseUrl <url>     # 修改 baseUrl
 glory-product-query-mcp setup claude-desktop  # 配置 Claude Desktop
 glory-product-query-mcp setup claude-code     # 配置 Claude Code（当前目录）

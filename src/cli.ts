@@ -13,7 +13,7 @@ interface GloryConfig {
 }
 
 const DEFAULT_CONFIG: GloryConfig = {
-  baseUrl: "https://hkapi.noahgroup.com/api/insurance",
+  baseUrl: "",
 };
 
 // ---------- 配置管理 ----------
@@ -51,6 +51,11 @@ function handleConfig(args: string[]): void {
     const baseUrlIdx = args.indexOf("--baseUrl");
     if (baseUrlIdx !== -1 && args[baseUrlIdx + 1]) {
       config.baseUrl = args[baseUrlIdx + 1];
+    }
+    if (!config.baseUrl) {
+      console.error("错误: 必须通过 --baseUrl 指定 API 地址");
+      console.error("用法: glory-product-query-mcp config init --baseUrl <url>");
+      process.exit(1);
     }
     saveConfig(config);
     console.log("配置已初始化: %s\n", CONFIG_FILE);

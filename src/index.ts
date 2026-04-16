@@ -14,7 +14,7 @@ interface GloryConfig {
 }
 
 const CONFIG_FILE = path.join(os.homedir(), ".glory", "config.json");
-const DEFAULT_BASE_URL = "https://hkapi.noahgroup.com/api/insurance";
+const DEFAULT_BASE_URL = "";
 
 function loadConfig(): GloryConfig {
   try {
@@ -28,6 +28,13 @@ function loadConfig(): GloryConfig {
 }
 
 const config = loadConfig();
+
+if (!config.baseUrl) {
+  process.stderr.write(
+    "错误: 未配置 baseUrl，请先运行: glory-product-query-mcp config init --baseUrl <url>\n"
+  );
+  process.exit(1);
+}
 
 // API 配置
 const API_URL = `${config.baseUrl}/osins/v1/salesPlan/wecomPlanList`;
