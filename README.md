@@ -123,6 +123,10 @@ mkdir -p .claude/skills
 cp -r node_modules/glory-product-query-mcp/skills/glory-product-query .claude/skills/
 ```
 
+**Claude Desktop:**
+
+Claude Desktop 无需额外安装 Skill，完成第三步 `setup claude-desktop` 后 MCP 工具即可直接使用。在对话中直接描述需求即可触发。
+
 安装后即可通过对话触发：
 
 - "查询产品列表"
