@@ -106,16 +106,24 @@ glory-product-query-mcp setup opencode        # 配置 OpenCode（~/.config/open
 glory-product-query-mcp serve                 # 启动 MCP Server (STDIO)
 ```
 
-## Claude Code Skill（可选）
+## 安装 Skill（可选）
 
-将 Skill 复制到项目的 `.claude/skills/` 目录，Claude Code 可自动识别并触发产品查询：
+Skill 可让 AI 自动识别产品查询意图并触发 MCP 工具。
+
+**Qoder:**
+
+```bash
+npx qoder skills add gloryfham/glory-kit
+```
+
+**Claude Code:**
 
 ```bash
 mkdir -p .claude/skills
 cp -r node_modules/glory-product-query-mcp/skills/glory-product-query .claude/skills/
 ```
 
-之后即可通过对话触发：
+安装后即可通过对话触发：
 
 - "查询产品列表"
 - "有什么在售产品"
