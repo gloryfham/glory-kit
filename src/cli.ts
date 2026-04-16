@@ -170,9 +170,42 @@ function setupKiro(): void {
 }
 
 function setupOpenCode(): void {
-  // OpenCode 全局配置: ~/.config/opencode/mcp.json
-  const mcpFile = path.join(os.homedir(), ".config", "opencode", "mcp.json");
-  injectMcpConfig(mcpFile, "OpenCode");
+  const serverPath = getServerScriptPath();
+  // OpenCode 配置: ~/.config/opencode/opencode.json
+  const configPath = path.join(os.homedir(), ".config", "opencode", "opencode.json");
+
+  // 确保目录存在
+  const dir = path.dirname(configPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  // 读取或创建配置
+  let config: Record<string, unknown> = {};
+  if (fs.existsSync(configPath)) {
+    try {
+      config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+    } catch {
+      config = {};
+    }
+  }
+
+  // OpenCode 使用不同的 MCP 配置格式
+  if (!config.mcp || typeof config.mcp !== "object") {
+    config.mcp = {};
+  }
+  (config.mcp as Record<string, unknown>)["glory-product-query"] = {
+    type: "local",
+    command: ["node", serverPath],
+    enabled: true,
+  };
+
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf-8");
+  console.log("OpenCode 配置已更新: %s", configPath);
+  console.log("\n已注册 MCP Server:");
+  console.log("  name: glory-product-query");
+  console.log("  command: node %s", serverPath);
+  console.log("\n请重启 OpenCode 以生效。");
 }
 
 function handleSetup(args: string[]): void {
@@ -201,7 +234,7 @@ function handleSetup(args: string[]): void {
   console.error("  glory-product-query-mcp setup claude-code     # 配置 Claude Code（当前目录 .mcp.json）");
   console.error("  glory-product-query-mcp setup qoder           # 配置 Qoder（当前目录 .mcp.json）");
   console.error("  glory-product-query-mcp setup kiro            # 配置 Kiro（当前目录 .kiro/settings/mcp.json）");
-  console.error("  glory-product-query-mcp setup opencode        # 配置 OpenCode（~/.config/opencode/mcp.json）");
+  console.error("  glory-product-query-mcp setup opencode        # 配置 OpenCode（~/.config/opencode/opencode.json）");
   process.exit(1);
 }
 
@@ -222,7 +255,7 @@ function main(): void {
     console.log("  claude-code      配置 Claude Code（当前目录 .mcp.json）");
     console.log("  qoder            配置 Qoder（当前目录 .mcp.json）");
     console.log("  kiro             配置 Kiro（当前目录 .kiro/settings/mcp.json）");
-    console.log("  opencode         配置 OpenCode（~/.config/opencode/mcp.json）");
+    console.log("  opencode         配置 OpenCode（~/.config/opencode/opencode.json）");
     return;
   }
 

@@ -90,7 +90,7 @@ npx glory-product-query-mcp setup kiro
 npx glory-product-query-mcp setup opencode
 ```
 
-写入全局配置 `~/.config/opencode/mcp.json`（需重启 OpenCode 生效）。
+写入全局配置 `~/.config/opencode/opencode.json`（需重启 OpenCode 生效）。
 
 ## CLI 命令
 
@@ -102,7 +102,7 @@ glory-product-query-mcp setup claude-desktop  # 配置 Claude Desktop
 glory-product-query-mcp setup claude-code     # 配置 Claude Code（当前目录 .mcp.json）
 glory-product-query-mcp setup qoder           # 配置 Qoder（当前目录 .mcp.json）
 glory-product-query-mcp setup kiro            # 配置 Kiro（当前目录 .kiro/settings/mcp.json）
-glory-product-query-mcp setup opencode        # 配置 OpenCode（~/.config/opencode/mcp.json）
+glory-product-query-mcp setup opencode        # 配置 OpenCode（~/.config/opencode/opencode.json）
 glory-product-query-mcp serve                 # 启动 MCP Server (STDIO)
 ```
 
